@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"fmt"
 	"github.com/iWangMu/Interpreter-Go/token"
 	"testing"
 )
@@ -41,6 +40,7 @@ let result = add(five, ten);
 		{token.IDENT, "x"},
 		{token.PLUS, "+"},
 		{token.IDENT, "y"},
+		{token.SEMICOLON, ";"},
 		{token.RBRACE, "}"},
 		{token.SEMICOLON, ";"},
 		{token.LET, "let"},
@@ -56,6 +56,15 @@ let result = add(five, ten);
 		{token.EOF, ""},
 	}
 
-	New(input).NextToken()
-	fmt.Println(tests)
+	l := New(input)
+	for idx, tt := range tests {
+		tok := l.NextToken()
+
+		if tok.Type != tt.expectedType {
+			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q", idx, tt.expectedType, tok.Type)
+		}
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q", idx, tt.expectedLiteral, tok.Literal)
+		}
+	}
 }
