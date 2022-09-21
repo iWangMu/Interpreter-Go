@@ -12,8 +12,20 @@ const (
 	INT   TokenType = "INT"
 
 	// 运算符
-	ASSIGN TokenType = "="
-	PLUS   TokenType = "+"
+	ASSIGN   TokenType = "="
+	PLUS     TokenType = "+"
+	MINUS    TokenType = "-"
+	ASTERISK TokenType = "*"
+	SLASH    TokenType = "/"
+	EQ       TokenType = "=="
+	NEQ      TokenType = "!="
+	LT       TokenType = "<"
+	LTE      TokenType = "<="
+	GT       TokenType = ">"
+	GTE      TokenType = ">="
+	BANG     TokenType = "!"
+	AND      TokenType = "&"
+	OR       TokenType = "|"
 
 	// 分隔符
 	COMMA     TokenType = ","
@@ -26,6 +38,11 @@ const (
 	// 关键字
 	FUNCTION TokenType = "FN"
 	LET      TokenType = "LET"
+	IF       TokenType = "IF"
+	ELSE     TokenType = "ELSE"
+	RETURN   TokenType = "RETURN"
+	TRUE     TokenType = "TRUE"
+	FALSE    TokenType = "FALSE"
 )
 
 type TokenType string
@@ -38,8 +55,13 @@ type Token struct {
 
 // 关键词
 var keywords = map[string]TokenType{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
+	"true":   TRUE,
+	"false":  FALSE,
 }
 
 // 获取标识符类型
