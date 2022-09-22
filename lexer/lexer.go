@@ -25,10 +25,50 @@ func (l *Lexer) NextToken() token.Token {
 	// 跳过空白字符
 	l.skipWhitespace()
 	switch l.ch {
-	case '=':
-		tok = newToken(token.ASSIGN, l.ch)
 	case '+':
 		tok = newToken(token.PLUS, l.ch)
+	case '-':
+		tok = newToken(token.MINUS, l.ch)
+	case '*':
+		tok = newToken(token.ASTERISK, l.ch)
+	case '/':
+		tok = newToken(token.SLASH, l.ch)
+	case '&':
+		tok = newToken(token.AND, l.ch)
+	case '|':
+		tok = newToken(token.OR, l.ch)
+	// = ==
+	case '=':
+		if l.peekChar() == '=' {
+			l.readChar()
+			tok = token.Token{Type: token.EQ, Literal: "=="}
+		} else {
+			tok = newToken(token.ASSIGN, l.ch)
+		}
+	// ! !=
+	case '!':
+		if l.peekChar() == '=' {
+			l.readChar()
+			tok = token.Token{Type: token.NEQ, Literal: "!="}
+		} else {
+			tok = newToken(token.BANG, l.ch)
+		}
+	// < <=
+	case '<':
+		if l.peekChar() == '=' {
+			l.readChar()
+			tok = token.Token{Type: token.LTE, Literal: "<="}
+		} else {
+			tok = newToken(token.LT, l.ch)
+		}
+	// > >=
+	case '>':
+		if l.peekChar() == '=' {
+			l.readChar()
+			tok = token.Token{Type: token.GTE, Literal: ">="}
+		} else {
+			tok = newToken(token.GT, l.ch)
+		}
 	case ',':
 		tok = newToken(token.COMMA, l.ch)
 	case ';':
@@ -62,7 +102,12 @@ func (l *Lexer) NextToken() token.Token {
 	return tok
 }
 
-// 读取input的下一个字符，只支持ASCII字符集
+// 构建新的词法单元
+func newToken(tokenType token.TokenType, ch byte) token.Token {
+	return token.Token{Type: tokenType, Literal: string(ch)}
+}
+
+// 读取下一个字符，并递增指向字符的指针，只支持ASCII字符集
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		// ASCII编码表示NUL字符，表示尚未读取任何内容或文件结尾
@@ -74,6 +119,15 @@ func (l *Lexer) readChar() {
 	l.readPosition += 1
 }
 
+// 读取下一个字符，但是不递增指向字符的指针，只支持ASCII字符集
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.readPosition]
+	}
+}
+
 // 获取完整的字符串标识
 func (l *Lexer) readIdentifier() string {
 	startPosition := l.position
@@ -83,6 +137,7 @@ func (l *Lexer) readIdentifier() string {
 	return l.input[startPosition:l.position]
 }
 
+// 获取完整的数字
 func (l *Lexer) readNumber() string {
 	startPosition := l.position
 	for isDigit(l.ch) {
@@ -91,11 +146,7 @@ func (l *Lexer) readNumber() string {
 	return l.input[startPosition:l.position]
 }
 
-func newToken(tokenType token.TokenType, ch byte) token.Token {
-	return token.Token{Type: tokenType, Literal: string(ch)}
-}
-
-// 只支持中英文大小写字符和下划线
+// 中英文大小写字符和下划线
 func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
@@ -105,6 +156,7 @@ func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
 
+// 跳过空白字符，包括' ' \t \n \r
 func (l *Lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()

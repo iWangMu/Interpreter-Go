@@ -1,6 +1,6 @@
 package token
 
-// 词法单元类型
+// 词法单元类型常量
 const (
 	// 未知的词法单元/字符
 	ILLEGAL TokenType = "ILLEGAL"
@@ -45,9 +45,10 @@ const (
 	FALSE    TokenType = "FALSE"
 )
 
+// 词法单元类型
 type TokenType string
 
-// 词法单元
+// 词法单元: 词法分析后生成一组词法单元
 type Token struct {
 	Type    TokenType
 	Literal string
